@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ReusableDotNet.Tests/ReusableDotNet.Tests.csproj" />
+  <Project Path="ReusableDotNet/ReusableDotNet.csproj" />
+</Solution>
