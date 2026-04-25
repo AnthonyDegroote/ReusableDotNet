@@ -1,4 +1,6 @@
-﻿namespace ReusableDotNet.Tests;
+﻿using ReusableDotNet.Tests.Builders;
+
+namespace ReusableDotNet.Tests;
 
 public class CacheExecutorTests
 {

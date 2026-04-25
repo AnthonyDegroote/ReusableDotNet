@@ -1,6 +1,7 @@
 using ReusableDotNet.Pagination;
+using ReusableDotNet.Tests.Builders;
 
-namespace ReusableDotNet.Tests;
+namespace ReusableDotNet.Tests.Pagination;
 
 public class PaginatorTests
 {

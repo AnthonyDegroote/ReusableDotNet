@@ -1,6 +1,4 @@
-using ReusableDotNet;
-
-namespace ReusableDotNet.Tests;
+namespace ReusableDotNet.Tests.Builders;
 
 internal sealed class CacheExecutorBuilder
 {
