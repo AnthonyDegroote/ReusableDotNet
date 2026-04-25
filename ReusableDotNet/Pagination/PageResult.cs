@@ -1,6 +1,6 @@
 namespace ReusableDotNet.Pagination;
 
-public sealed class PageResult<T>
+public sealed record class PageResult<T>
 {
     public PageResult(IReadOnlyList<T> items, int pageNumber, int pageSize, int totalCount, int totalPages)
     {
