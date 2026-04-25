@@ -36,7 +36,7 @@ public sealed class Paginator<T>
 
     public PageOutOfRangeBehavior OutOfRangeBehavior { get; }
 
-    public void SetPageSize(int pageSize)
+    public void SetDefaultPageSize(int pageSize)
     {
         ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(pageSize, 0);
 
@@ -156,7 +156,7 @@ public sealed class Paginator<T>
             return _defaultPageSize.Value;
         }
 
-        throw new InvalidOperationException("No default page size is configured. Set one at initialization, call SetPageSize, or use an overload with pageSize.");
+        throw new InvalidOperationException("No default page size is configured. Set one at initialization, call SetDefaultPageSize, or use an overload with pageSize.");
     }
 
     private static int CalculateTotalPages(int totalCount, int pageSize)

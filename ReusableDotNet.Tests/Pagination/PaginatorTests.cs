@@ -19,6 +19,10 @@ public class PaginatorTests
         Assert.Equal(3, page.PageSize);
         Assert.Equal(10, page.TotalCount);
         Assert.Equal(4, page.TotalPages);
+        Assert.False(page.IsEmpty);
+        Assert.Equal(1, page.FirstItemIndex);
+        Assert.Equal(3, page.LastItemIndex);
+        Assert.Equal(7, page.RemainingItemCount);
         Assert.False(page.HasPreviousPage);
         Assert.True(page.HasNextPage);
     }
@@ -33,6 +37,10 @@ public class PaginatorTests
         var page = paginator.GetPage(4, 3);
 
         Assert.Equal([10], page.Items);
+        Assert.False(page.IsEmpty);
+        Assert.Equal(10, page.FirstItemIndex);
+        Assert.Equal(10, page.LastItemIndex);
+        Assert.Equal(0, page.RemainingItemCount);
         Assert.False(page.HasNextPage);
         Assert.True(page.HasPreviousPage);
     }
@@ -51,6 +59,10 @@ public class PaginatorTests
         Assert.Equal(3, page.PageSize);
         Assert.Equal(5, page.TotalCount);
         Assert.Equal(2, page.TotalPages);
+        Assert.True(page.IsEmpty);
+        Assert.Equal(0, page.FirstItemIndex);
+        Assert.Equal(0, page.LastItemIndex);
+        Assert.Equal(5, page.RemainingItemCount);
         Assert.False(page.HasPreviousPage);
         Assert.False(page.HasNextPage);
     }
@@ -98,6 +110,10 @@ public class PaginatorTests
         Assert.Empty(page.Items);
         Assert.Equal(0, page.TotalCount);
         Assert.Equal(0, page.TotalPages);
+        Assert.True(page.IsEmpty);
+        Assert.Equal(0, page.FirstItemIndex);
+        Assert.Equal(0, page.LastItemIndex);
+        Assert.Equal(0, page.RemainingItemCount);
         Assert.False(page.HasPreviousPage);
         Assert.False(page.HasNextPage);
     }
@@ -258,14 +274,14 @@ public class PaginatorTests
     }
 
     [Fact]
-    public void SetPageSize_ShouldOverrideDefaultPageSize_ForSubsequentCallsWithoutPageSize()
+    public void SetDefaultPageSize_ShouldOverrideDefaultPageSize_ForSubsequentCallsWithoutPageSize()
     {
         var paginator = new PaginatorBuilder()
             .WithRange(1, 10)
             .WithDefaultPageSize(2)
             .Build();
 
-        paginator.SetPageSize(5);
+        paginator.SetDefaultPageSize(5);
 
         var page = paginator.GetPage(2);
 

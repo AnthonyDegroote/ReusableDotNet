@@ -23,6 +23,14 @@ public sealed record class PageResult<T>
 
     public int TotalPages { get; }
 
+    public bool IsEmpty => Items.Count == 0;
+
+    public int FirstItemIndex => IsEmpty ? 0 : ((PageNumber - 1) * PageSize) + 1;
+
+    public int LastItemIndex => IsEmpty ? 0 : FirstItemIndex + Items.Count - 1;
+
+    public int RemainingItemCount => IsEmpty ? TotalCount : Math.Max(0, TotalCount - LastItemIndex);
+
     public bool HasPreviousPage => TotalPages > 0 && PageNumber > 1 && PageNumber <= TotalPages;
 
     public bool HasNextPage => TotalPages > 0 && PageNumber < TotalPages;
