@@ -3,6 +3,7 @@ namespace ReusableDotNet.Pagination;
 public sealed class Paginator<T>
 {
     private readonly IReadOnlyList<T> _items;
+    private readonly object _cursor = new();
     private int? _defaultPageSize;
 
     public Paginator(IEnumerable<T> items)
@@ -58,7 +59,7 @@ public sealed class Paginator<T>
 
         if (totalPages == 0)
         {
-            return new PageResult<T>([], pageNumber, pageSize, totalCount, totalPages);
+            return new PageResult<T>([], pageNumber, pageSize, totalCount, totalPages, _cursor);
         }
 
         if (pageNumber > totalPages)
@@ -66,7 +67,7 @@ public sealed class Paginator<T>
             var resolvedPageNumber = ResolveOutOfRangePageNumber(pageNumber, totalPages);
             if (!resolvedPageNumber.HasValue)
             {
-                return new PageResult<T>([], pageNumber, pageSize, totalCount, totalPages);
+                return new PageResult<T>([], pageNumber, pageSize, totalCount, totalPages, _cursor);
             }
 
             pageNumber = resolvedPageNumber.Value;
@@ -76,7 +77,7 @@ public sealed class Paginator<T>
         var count = Math.Min(pageSize, totalCount - startIndex);
         var pageItems = CopyItems(startIndex, count);
 
-        return new PageResult<T>(pageItems, pageNumber, pageSize, totalCount, totalPages);
+        return new PageResult<T>(pageItems, pageNumber, pageSize, totalCount, totalPages, _cursor);
 
         IReadOnlyList<T> CopyItems(int index, int length)
         {
@@ -98,6 +99,7 @@ public sealed class Paginator<T>
     public PageResult<T> Next(PageResult<T> currentPage)
     {
         ArgumentNullException.ThrowIfNull(currentPage);
+        ValidatePageOwnership(currentPage);
 
         var maxPageNumber = currentPage.TotalPages == 0 ? 1 : currentPage.TotalPages;
         var nextPageNumber = Math.Min(currentPage.PageNumber + 1, maxPageNumber);
@@ -107,6 +109,7 @@ public sealed class Paginator<T>
     public PageResult<T> Previous(PageResult<T> currentPage)
     {
         ArgumentNullException.ThrowIfNull(currentPage);
+        ValidatePageOwnership(currentPage);
 
         var previousPageNumber = Math.Max(1, currentPage.PageNumber - 1);
         return GetPage(previousPageNumber, currentPage.PageSize);
@@ -136,6 +139,14 @@ public sealed class Paginator<T>
         var totalPages = CalculateTotalPages(_items.Count, pageSize);
         var lastPageNumber = totalPages == 0 ? 1 : totalPages;
         return GetPage(lastPageNumber, pageSize);
+    }
+
+    private void ValidatePageOwnership(PageResult<T> page)
+    {
+        if (page.Cursor is null || !ReferenceEquals(page.Cursor, _cursor))
+        {
+            throw new InvalidOperationException("The provided page was not created by this paginator instance.");
+        }
     }
 
     private int? ResolveOutOfRangePageNumber(int requestedPageNumber, int totalPages)

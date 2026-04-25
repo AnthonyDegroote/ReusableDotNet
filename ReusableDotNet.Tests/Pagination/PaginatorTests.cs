@@ -182,6 +182,26 @@ public class PaginatorTests
     }
 
     [Fact]
+    public void Next_ShouldThrow_WhenPageComesFromAnotherPaginator()
+    {
+        var paginator = new PaginatorBuilder()
+            .WithRange(1, 10)
+            .Build();
+        var otherPaginator = new PaginatorBuilder()
+            .WithRange(1, 10)
+            .Build();
+
+        var otherPage = otherPaginator.GetPage(1, 3);
+
+        void Act()
+        {
+            paginator.Next(otherPage);
+        }
+
+        Assert.Throws<InvalidOperationException>(Act);
+    }
+
+    [Fact]
     public void Previous_ShouldReturnPreviousPage_OrFirstPage()
     {
         var paginator = new PaginatorBuilder()
@@ -199,6 +219,26 @@ public class PaginatorTests
 
         Assert.Equal([1, 2, 3], previousFromFirst.Items);
         Assert.Equal(1, previousFromFirst.PageNumber);
+    }
+
+    [Fact]
+    public void Previous_ShouldThrow_WhenPageComesFromAnotherPaginator()
+    {
+        var paginator = new PaginatorBuilder()
+            .WithRange(1, 10)
+            .Build();
+        var otherPaginator = new PaginatorBuilder()
+            .WithRange(1, 10)
+            .Build();
+
+        var otherPage = otherPaginator.GetPage(2, 3);
+
+        void Act()
+        {
+            paginator.Previous(otherPage);
+        }
+
+        Assert.Throws<InvalidOperationException>(Act);
     }
 
     [Fact]
