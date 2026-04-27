@@ -10,6 +10,22 @@ public class CacheExecutor<TKey, TValue> where TKey : notnull
 
     public int Count => _cache.Count;
 
+    public CacheExecutor()
+    {
+        // No initialization needed for the default constructor.
+    }
+
+    public CacheExecutor(Func<IEnumerable<KeyValuePair<TKey, TValue>>> initialValuesFactory)
+    {
+        ArgumentNullException.ThrowIfNull(initialValuesFactory);
+
+        foreach (var (key, value) in initialValuesFactory())
+        {
+            var lazy = new Lazy<TValue>(() => value, LazyThreadSafetyMode.ExecutionAndPublication);
+            _cache[key] = lazy;
+        }
+    }
+
     public bool TryGetValue(TKey key, out TValue value)
     {
         if (_cache.TryGetValue(key, out var lazyValue) && lazyValue.IsValueCreated)

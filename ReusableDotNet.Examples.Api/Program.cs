@@ -22,8 +22,8 @@ app.MapGet("/api/pagination/config", () =>
         paginator.OutOfRangeBehavior
     });
 })
-.WithName("GetPaginationConfiguration")
-.WithOpenApi();
+.WithName("GetPaginationConfiguration");
+//.WithOpenApi();
 
 app.MapPost("/api/pagination/default-page-size/{pageSize:int}", (int pageSize) =>
 {
@@ -34,8 +34,8 @@ app.MapPost("/api/pagination/default-page-size/{pageSize:int}", (int pageSize) =
         paginator.DefaultPageSize
     });
 })
-.WithName("SetDefaultPageSize")
-.WithOpenApi();
+.WithName("SetDefaultPageSize");
+//.WithOpenApi();
 
 app.MapGet("/api/pagination/pages/{pageNumber:int}", (int pageNumber, int? pageSize) =>
 {
@@ -46,8 +46,8 @@ app.MapGet("/api/pagination/pages/{pageNumber:int}", (int pageNumber, int? pageS
     currentPage = page;
     return Results.Ok(page);
 })
-.WithName("GetPage")
-.WithOpenApi();
+.WithName("GetPage");
+//.WithOpenApi();
 
 app.MapPost("/api/pagination/next", () =>
 {
@@ -59,8 +59,8 @@ app.MapPost("/api/pagination/next", () =>
     currentPage = paginator.Next(currentPage);
     return Results.Ok(currentPage);
 })
-.WithName("GetNextPage")
-.WithOpenApi();
+.WithName("GetNextPage");
+//.WithOpenApi();
 
 app.MapPost("/api/pagination/previous", () =>
 {
@@ -72,8 +72,8 @@ app.MapPost("/api/pagination/previous", () =>
     currentPage = paginator.Previous(currentPage);
     return Results.Ok(currentPage);
 })
-.WithName("GetPreviousPage")
-.WithOpenApi();
+.WithName("GetPreviousPage");
+//.WithOpenApi();
 
 app.MapPost("/api/pagination/next/external", (ExternalPageRequest request) =>
 {
@@ -87,8 +87,8 @@ app.MapPost("/api/pagination/next/external", (ExternalPageRequest request) =>
     var nextPage = paginator.Next(externalPage);
     return Results.Ok(nextPage);
 })
-.WithName("TryNextWithExternalPage")
-.WithOpenApi();
+.WithName("TryNextWithExternalPage");
+//.WithOpenApi();
 
 app.Run();
 

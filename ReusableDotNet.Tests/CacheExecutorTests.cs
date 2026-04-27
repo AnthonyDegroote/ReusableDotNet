@@ -128,4 +128,44 @@ public class CacheExecutorTests
         Assert.Equal(0, cache.Count);
         Assert.Empty(cache.Keys);
     }
+
+    [Fact]
+    public void Constructor_ShouldThrow_WhenInitialValuesFactoryIsNull()
+    {
+        Func<IEnumerable<KeyValuePair<string, int>>>? factory = null;
+
+        void Act()
+        {
+            _ = new CacheExecutor<string, int>(factory!);
+        }
+
+        Assert.Throws<ArgumentNullException>(Act);
+    }
+
+    [Fact]
+    public void Constructor_ShouldInitializeCache_FromInitialValuesFactory()
+    {
+        var cache = new CacheExecutor<string, int>(CreateInitialValues);
+
+        Assert.Equal(2, cache.Count);
+        Assert.Contains("a", cache.Keys);
+        Assert.Contains("bb", cache.Keys);
+
+        var first = cache.Execute("a", FallbackFactory);
+        var second = cache.Execute("bb", FallbackFactory);
+
+        Assert.Equal(1, first);
+        Assert.Equal(2, second);
+
+        static IEnumerable<KeyValuePair<string, int>> CreateInitialValues()
+        {
+            yield return new KeyValuePair<string, int>("a", 1);
+            yield return new KeyValuePair<string, int>("bb", 2);
+        }
+
+        static int FallbackFactory(string key)
+        {
+            return key.Length + 100;
+        }
+    }
 }
